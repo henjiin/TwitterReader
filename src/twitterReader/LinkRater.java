@@ -80,6 +80,14 @@ public class LinkRater {
 		}
 		String linkSourcePath = args[0];
 		String taggedLinkPath = args[1];
+		Runtime rt = Runtime.getRuntime();
+		Process pr;
+		try {
+			pr = rt.exec("chromium-browser --new-window www.google.de");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		BufferedReader reader = null;
 		try {
 			File file = new File(linkSourcePath);
@@ -95,8 +103,8 @@ public class LinkRater {
 					System.out.println("Page not Found");
 				}
 				System.out.println(link);
-				Runtime rt = Runtime.getRuntime();
-				Process pr = rt.exec("chromium-browser " + link);
+				
+				pr = rt.exec("chromium-browser " + link);
 				System.in.read();
 
 			}

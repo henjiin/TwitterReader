@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 
 public class TwitterCorpusLinkFinder {
 	 public static String expandShortURL(String address) throws IOException {

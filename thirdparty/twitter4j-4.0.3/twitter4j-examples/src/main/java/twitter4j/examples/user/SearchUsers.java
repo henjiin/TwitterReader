@@ -43,6 +43,7 @@ public final class SearchUsers {
                 for (User user : users) {
                     if (user.getStatus() != null) {
                         System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+                        user.
                     } else {
                         // the user is protected
                         System.out.println("@" + user.getScreenName());
