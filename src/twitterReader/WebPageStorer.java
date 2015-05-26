@@ -11,30 +11,25 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class WebPageStorer {
-	File _pageStorage;
-	File _listOfPages;
+	File _pageStorage;	
 	PrintWriter _storageWriter;	
-	String pathToStorage;
-	String pathToList;
+	String pathToStorage;	
 	boolean appendToFiles=true;
 	
 	public WebPageStorer() {
-		_pageStorage=new File("pageStorage");
-		_listOfPages=new File("listOfPages");		
-		initWriters("pageStorage", "listOfPages");
+		_pageStorage=new File("pageStorage");		
+		initWriters("pageStorage");
 
 	}
 	
-	public WebPageStorer(String pageStorage, String listOfPages){
-		_pageStorage=new File(pageStorage);
-		_listOfPages=new File(listOfPages);		
-		initWriters(pageStorage, listOfPages);
+	public WebPageStorer(String pageStorage){
+		_pageStorage=new File(pageStorage);		
+		initWriters(pageStorage);
 	}
-	public WebPageStorer(String pageStorage, String listOfPages, boolean appendFile){
+	public WebPageStorer(String pageStorage, boolean appendFile){
 		_pageStorage=new File(pageStorage);
-		_listOfPages=new File(listOfPages);	
-		appendToFiles=appendFile;
-		initWriters(pageStorage, listOfPages);
+				appendToFiles=appendFile;
+		initWriters(pageStorage);
 		
 	}
 	public void storePage(String URL) throws IOException{
@@ -55,7 +50,7 @@ public class WebPageStorer {
         br.close();
         
        }
-	 void initWriters(String pageStorage, String listOfPages){
+	 void initWriters(String pageStorage){
 		try{
 			 _storageWriter = new PrintWriter(
 				new BufferedWriter(
