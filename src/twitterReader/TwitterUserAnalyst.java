@@ -30,6 +30,10 @@ public class TwitterUserAnalyst {
 	 * Stores Tweet to a default location for convinience Tweet stored as JSON
 	 * Entity
 	 */
+	/*
+	 * Stores Tweet to a default location for convinience Tweet stored as JSON
+	 * Entity
+	 */
 	private static void storeJSON(String rawJSON, String fileName)
 			throws IOException {
 		FileOutputStream fos = null;
@@ -62,6 +66,7 @@ public class TwitterUserAnalyst {
 			}
 		}
 	}
+
 	public static void storePage(String URL, String fileName) throws IOException{
 		URL url = new URL(URL);
 		URLConnection conn = url.openConnection();
@@ -82,7 +87,25 @@ public class TwitterUserAnalyst {
 
 	}
 	
-	
+	static void storeTweet(Status tweet, String filename) {
+		String rawJSON = TwitterObjectFactory.getRawJSON(tweet);
+		String fileName = filename;
+		fileName += tweet.getId();
+		try {
+			storeJSON(rawJSON, fileName+ ".json");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		try {
+			storePage(tweet.getURLEntities()[0].getExpandedURL(), fileName+".html");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	}
+
 
 	static void storeTweet(Status tweet, int status) {
 		String rawJSON = TwitterObjectFactory.getRawJSON(tweet);
@@ -174,19 +197,8 @@ public class TwitterUserAnalyst {
 		}
 		return status;
 	}
-
-	public static void main(String[] args) {
-		WebPageStorer clickBaiteStorer = null;
-		WebPageStorer seriousStorer = null;
-		WebPageStorer etcStorer = null;
-		int tweetsPerPage = 50;
-		if (args.length > 1) {
-			twitterUser = args[1];
-			documentPath = args[0];
-		}
-
-
-		// Opens Twitter API
+	public static Twitter getTwitter(){
+		
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
 				.setOAuthConsumerKey("dWEbLPNrfb4j6ClbuV2zbb2MF")
@@ -199,7 +211,24 @@ public class TwitterUserAnalyst {
 				.setJSONStoreEnabled(true);
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-		/*
+ 
+		return twitter;
+		
+		
+	}
+
+	public static void main(String[] args) {
+
+		int tweetsPerPage = 50;
+		if (args.length > 1) {
+			twitterUser = args[1];
+			documentPath = args[0];
+		}
+
+		Twitter twitter=getTwitter();
+		// Opens Twitter API
+		// Config Builder is necessary to enable JSON store enabled
+				/*
 		 * Twitter twitter = new TwitterFactory().getInstance();
 		 * twitter.setOAuthConsumer("dWEbLPNrfb4j6ClbuV2zbb2MF",
 		 * "ITjeI4jI5Xu7p6UmdLMwlQbmhA8hkwVpmebIqyN2qredCOah6A");
@@ -210,11 +239,13 @@ public class TwitterUserAnalyst {
 		int pageCounter = 1;
 		Paging paging = new Paging(pageCounter, tweetsPerPage);
 		List<Status> statuses = null;
-
+		//Go through potentially all tweets of a user
+		//Twitter can and will react funny at times
 		do {
-			try {
+			try{
 				statuses = twitter.getUserTimeline(twitterUser, paging);
 			} catch (TwitterException twitterException) {
+				//Usually when connection limit reached
 				System.out.println("Twitter sagt Feierabend");
 				break;
 			}
@@ -222,13 +253,17 @@ public class TwitterUserAnalyst {
 				// No Links-> No Clickbait
 				if (status.getURLEntities().length > 0) {
 					int isClickbait = evaluateTweet(status);
+					//stores tweet and the associated webpage
+					
 					storeTweet(status, isClickbait);
 					
 
 				}
 			}
+			
 			pageCounter++;
 			paging = new Paging(pageCounter, tweetsPerPage);
+			//Feedback system for the sanity of the programs user
 			System.out.println("Another " + tweetsPerPage
 					+ "Tweets done.\nWant to continue?");
 			Scanner sc = new Scanner(System.in);
