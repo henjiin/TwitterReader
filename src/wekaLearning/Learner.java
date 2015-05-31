@@ -94,6 +94,10 @@ public class Learner {
 		}
 	}
 	
+	public void rate(){
+		
+	}
+	
 	/**
 	 * This method saves the trained model into a file. This is done by
 	 * simple serialization of the classifier object.

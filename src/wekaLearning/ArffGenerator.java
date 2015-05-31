@@ -25,14 +25,24 @@ public class ArffGenerator {
 	static boolean removeRT = false;
 	static boolean removeTwitterUsers = true;
 	static String arffFileName;
-	static String HEADER = "@RELATION clickibait_detection\n\n@ATTRIBUTE tweet_text String\n@ATTRIBUTE hasExclamationMark numeric\n@ATTRIBUTE hasQuestionMark numeric\n@ATTRIBUTE amountOfDots numeric\n@ATTRIBUTE clickbait_class {clickbait,serious}\n\n@data\n";
+	static String HEADER = "@RELATION clickibait_detection\n\n"
+			+ "@ATTRIBUTE tweet_text String\n"
+			+ "@ATTRIBUTE hasExclamationMark {yes,no}\n"
+			+ "@ATTRIBUTE hasQuestionMark {yes,no}\n"
+			+ "@ATTRIBUTE amountOfDots numeric\n"
+			+ "@ATTRIBUTE isSelfRefering {yes,no}\n"
+			+ "@ATTRIBUTE refersToReader {yes,no}\n"
+			+ "@ATTRIBUTE starts_with_number {yes,no}\n"
+			+ "@ATTRIBUTE sentiment {very_positive,positve,neutral,negative,very_negative}\n"
+			+ "@ATTRIBUTE clickbait_class {clickbait,serious}\n\n"
+			+ "@data\n";
 	static String urlPattern = "((https?|ftp|file|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
 	// TODO: To be refined
 	static String userPattern = "@([A-Za-z0-9_]+)";
 	static Pattern URLpattern = Pattern.compile(urlPattern,
 			Pattern.CASE_INSENSITIVE);
 	static Pattern userPatter = Pattern.compile(userPattern);
-
+	
 	private static String removeUrl(String string) {
 
 		Matcher m = URLpattern.matcher(string);
@@ -60,7 +70,7 @@ public class ArffGenerator {
 
 	}
 
-	private static String readFirstLine(String fileName) throws IOException {
+	private static String readFirstLine(String fileName) throws IOException {		
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
@@ -95,11 +105,13 @@ public class ArffGenerator {
 			TwitterException {
 		String rawJSON = readFirstLine(fileName);
 		Status status = TwitterObjectFactory.createStatus(rawJSON);
+		
+		
 		return status;
 	}
 
 	static List<String> getJSONFileList(String pathToFolder) {
-		List fileList = new LinkedList<String>();
+		List<String> fileList = new LinkedList<String>();
 
 		File[] files = new File(pathToFolder).listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
@@ -115,16 +127,16 @@ public class ArffGenerator {
 
 	public static String hasQuestionMark(String text) {
 		if (text.contains("?"))
-			return "1";
+			return "yes";
 		else
-			return "0";
+			return "no";
 	}
 
 	public static String hasExclamationMark(String text) {
 		if (text.contains("!"))
-			return "1";
+			return "yes";
 		else
-			return "0";
+			return "no";
 	}
 
 	public static int amountOfDots(String text) {
@@ -140,38 +152,67 @@ public class ArffGenerator {
 		return counter;
 	}
 	
-	public static int isSelfRefering(String text){
+	public static String isSelfRefering(String text){
 		text=text.toLowerCase();
 		if(text.contains("i")||text.contains("me")||text.contains("mine")||text.contains("we")||text.contains("our"))
-		return 1;
-		return 0;
+		return "yes";
+		return "no";
 	}
 	
-	public static int isReferingToReader(String text){
+	public static String isReferingToReader(String text){
 		text=text.toLowerCase();
 		if(text.contains("you")||text.contains("your")||text.contains("yours")||text.contains("yourselfes")||text.contains("our"))
-		return 1;
-		return 0;
+		return "yes";
+		return "no";
 		
 	}
-	public static int startsWithNumber(String text){
-		StringTokenizer tokenizer=new StringTokenizer(" ");
+	public static String startsWithNumber(String text){
+		StringTokenizer tokenizer=new StringTokenizer(text," ");
 		String token=tokenizer.nextToken();
 		try{
 			Integer.parseInt(token);
-			return 1;
+			return "yes";
 		}catch(NumberFormatException e){
-			return 0;
+			return "no";
 		}
 	}
+	
+	public static String getSentiment(SWN3 swn, String text){
+	    
+	        String[] words = text.split("\\s+"); 
+	        double totalScore = 0, averageScore = 0;
+	        for(String word : words) {
+	            word = word.replaceAll("([^a-zA-Z\\s])", "");
+	            if (swn.extract(word) == null)
+	                continue;
+	            totalScore += swn.extract(word);
+	        }
+	        averageScore = totalScore/words.length;
+
+	        if(averageScore>=0.75)
+	            return "very_positve";
+	        else if(averageScore > 0.25 && averageScore<0.5)
+	            return  "positve";
+	        else if(averageScore>=0.5)
+	            return  "positve";
+	        else if(averageScore < 0 && averageScore>=-0.25)
+	            return "negative";
+	        else if(averageScore < -0.25 && averageScore>=-0.5)
+	            return "negative";
+	        else if(averageScore<=-0.75)
+	            return "very_negative";
+	        return "neutral";
+	    }		
+	
 
 	public static void writeArff(String filename, String learningClass) {
 		List<String> list = getJSONFileList(filename);
-
+		SWN3 swn=null;
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(
 					arffFileName, true)));
+			swn=new SWN3("/home/sebastiankopsel/Data/swn.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -190,11 +231,19 @@ public class ArffGenerator {
 				objectAttributes.append(",");
 				objectAttributes.append(amountOfDots(tweetText));
 				objectAttributes.append(",");
+				objectAttributes.append(isSelfRefering(tweetText));
+				objectAttributes.append(",");
+				objectAttributes.append(isReferingToReader(tweetText));
+				objectAttributes.append(",");
+				objectAttributes.append(startsWithNumber(tweetText));
+				objectAttributes.append(",");
+				objectAttributes.append(getSentiment(swn, tweetText));
+				objectAttributes.append(",");
 				objectAttributes.append(learningClass);
 				objectAttributes.append("\n");
 				writer.write(objectAttributes.toString());
 
-			} catch (IOException | TwitterException e) {
+			} catch (IOException | TwitterException | NullPointerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -205,10 +254,13 @@ public class ArffGenerator {
 	}
 
 	public static void main(String[] args) {
-		arffFileName = "/home/sebastiankopsel/Data/Serious/clickbait.arff";
+		arffFileName = "/home/sebastiankopsel/Data/Serious/clickbait-caro.arff";
 		writeHeader();
-		writeArff("/home/sebastiankopsel/Data/Serious/clickbait", "clickbait");
-		writeArff("/home/sebastiankopsel/Data/Serious/serious", "serious");
+		writeArff("/home/sebastiankopsel/Data/Serious/clickbait-caro", "clickbait");
+		writeArff("/home/sebastiankopsel/Data/Serious/serious-caro", "serious");
+		
+		
+		System.out.println("Finished");
 	}
 
 	private static void writeHeader() {

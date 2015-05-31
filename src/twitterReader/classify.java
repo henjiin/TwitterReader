@@ -11,41 +11,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 import twitter4j.*;
-import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
-import static java.nio.file.CopyOption.*;
-public class TwitterUserAnalyst {
+
+public class classify {
 	static String twitterUser = "washingtonpost";
 	static String documentPath = "/home/sebastiankopsel/Data/Serious/";
 	static final int SERIOUS = -1;
 	static final int CLICKBAIT = 1;
 	static final int NEUTRAL = 0;
-
 	/*
-	 * Stores Tweet to a default location for convinience Tweet stored as JSON
-	 * Entity
+	 * Args: 0 soruce tweet folder
 	 */
-	/*
-	 * Stores Tweet to a default location for convinience Tweet stored as JSON
-	 * Entity
-	 */
-	public TwitterUserAnalyst() {
-		// TODO Auto-generated constructor stub
-		getTwitter();
-		
-	}
 	private static void storeJSON(String rawJSON, String fileName)
 			throws IOException {
 		FileOutputStream fos = null;
@@ -120,6 +101,7 @@ public class TwitterUserAnalyst {
 
 
 	static void storeTweet(Status tweet, int status) {
+		Twitter t=getTwitter();
 		String rawJSON = TwitterObjectFactory.getRawJSON(tweet);
 		String fileName = documentPath;
 		switch (status) {
@@ -137,7 +119,7 @@ public class TwitterUserAnalyst {
 		}
 
 		fileName += tweet.getId();
-		try {			
+		try {
 			storeJSON(rawJSON, fileName+ ".json");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -165,21 +147,6 @@ public class TwitterUserAnalyst {
 			System.out.println("URL:\t"
 					+ tweet.getURLEntities()[0].getExpandedURL());
 		System.out.println("------------------");
-		Runtime rt = Runtime.getRuntime();
-		Process pr;
-		
-
-			// if (tweet.getURLEntities().length > 0)
-			// url = tweet.getURLEntities()[0].getExpandedURL();
-			// else
-			String url = "https://twitter.com/" + tweet.getUser().getScreenName()
-					+ "/status/" + tweet.getId();
-			try {
-				pr = rt.exec("chromium-browser " + url);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
 	}
 
@@ -243,6 +210,7 @@ public class TwitterUserAnalyst {
 		
 		
 	}
+
 	private static String readFirstLine(File fileName) throws IOException {
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
@@ -275,40 +243,20 @@ public class TwitterUserAnalyst {
 	}
 
 	public static void main(String[] args) {
-
-		int tweetsPerPage = 50;
-		if (args.length > 1) {
-			twitterUser = args[1];
-			documentPath = args[0];
-		}
-
+		String sourceToBeClassified = "/home/sebastiankopsel/Data/Unclassified";
+		ConfigurationBuilder cb = new ConfigurationBuilder();
 		Twitter twitter=getTwitter();
-		// Opens Twitter API
-		// Config Builder is necessary to enable JSON store enabled
-				/*
-		 * Twitter twitter = new TwitterFactory().getInstance();
-		 * twitter.setOAuthConsumer("dWEbLPNrfb4j6ClbuV2zbb2MF",
-		 * "ITjeI4jI5Xu7p6UmdLMwlQbmhA8hkwVpmebIqyN2qredCOah6A");
-		 * twitter.setOAuthAccessToken(new AccessToken(
-		 * "3280097199-I9Q4dEtsX2qr9BnT5n9mTPeYlYV3Fm1yBMV5231",
-		 * "jk08WJwHeYyK7WWK1ljhuswIc8LFuivMvwB09vKedkPN4"));
-		 */
-		int pageCounter = 1;
-		Paging paging = new Paging(pageCounter, tweetsPerPage);
-		List<Status> statuses = null;
-		//Go through potentially all tweets of a user
-		//Twitter can and will react funny at times
-		/*
-		do {
-			try{
-				statuses = twitter.getUserTimeline(twitterUser, paging);
-			} catch (TwitterException twitterException) {
-				//Usually when connection limit reached
-				System.out.println("Twitter sagt Feierabend");
-				break;
-			}
-			for (Status status : statuses) {
-				// No Links-> No Clickbait
+		twitter.getClass();
+		try {
+			File[] files = new File(sourceToBeClassified)
+					.listFiles(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".json");
+						}
+					});
+			for (File file : files) {
+				String rawJSON = readFirstLine(file);
+				Status status = TwitterObjectFactory.createStatus(rawJSON);
 				if (status.getURLEntities().length > 0) {
 					int isClickbait = evaluateTweet(status);
 					//stores tweet and the associated webpage
@@ -316,58 +264,6 @@ public class TwitterUserAnalyst {
 					storeTweet(status, isClickbait);
 					
 
-				}
-			}
-			
-			pageCounter++;
-			paging = new Paging(pageCounter, tweetsPerPage);
-			//Feedback system for the sanity of the programs user
-			System.out.println("Another " + tweetsPerPage
-					+ "Tweets done.\nWant to continue?");
-			Scanner sc = new Scanner(System.in);
-			if (sc.nextLine().equals("q"))
-				break;
-
-		} while ((statuses != null) && (!statuses.isEmpty()));
-		*/
-		try {
-			statuses = twitter.getUserTimeline("test", paging);
-		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			File[] files = new File("/home/sebastiankopsel/Data/Unclassified")
-					.listFiles(new FilenameFilter() {
-						public boolean accept(File dir, String name) {
-							return name.endsWith(".json");
-						}
-					});
-			File[] clickbait = new File("/home/sebastiankopsel/Data/Serious/clickbait")
-			.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".json");
-				}
-			});
-			File[] serious = new File("/home/sebastiankopsel/Data/Serious/serious")
-			.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".json");
-				}
-			});
-			for (File file : files) {				
-				{
-				String rawJSON = readFirstLine(file);
-				Status status = TwitterObjectFactory.createStatus(rawJSON);
-				if (status.getURLEntities().length > 0) {
-					int isClickbait = evaluateTweet(status);
-					//stores tweet and the associated webpage
-					
-					//storeTweet(status, isClickbait);
-					moveTweet(status, isClickbait);
-					
-
-				}
 				}
 			}
 			
@@ -380,26 +276,5 @@ public class TwitterUserAnalyst {
 			System.exit(-1);
 		}
 
-		System.out.println("End of Stream");
-
 	}
-	private static void moveTweet(Status status, int isClickbait) {
-		// TODO Auto-generated method stub
-		String fromJSON ="/home/sebastiankopsel/Data/Unclassified/"+status.getId()+".json";
-		String toJSON = "/home/sebastiankopsel/Data/Serious/";
-		if(isClickbait==CLICKBAIT)
-			toJSON+="clickbait-caro/"+status.getId()+".json";
-		if(isClickbait==SERIOUS)
-			toJSON+="serious-caro/"+status.getId()+".json";
-		if(isClickbait!=CLICKBAIT&&isClickbait!=SERIOUS) toJSON+="etc-caro/"+status.getId()+".json";;
-		try {
-			Files.copy(Paths.get(fromJSON) ,Paths.get(toJSON));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-	}
-
 }
