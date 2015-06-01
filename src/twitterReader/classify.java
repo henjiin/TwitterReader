@@ -13,12 +13,16 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Properties;
 import java.util.Scanner;
 
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class classify {
+	
+	
+	static Properties properties;
 	static String twitterUser = "washingtonpost";
 	static String documentPath = "/home/sebastiankopsel/Data/Serious/";
 	static final int SERIOUS = -1;
@@ -27,6 +31,19 @@ public class classify {
 	/*
 	 * Args: 0 soruce tweet folder
 	 */
+	
+	
+	
+	public static void init(){
+		properties = new Properties();
+		
+		
+		
+		
+	}
+	
+	
+	
 	private static void storeJSON(String rawJSON, String fileName)
 			throws IOException {
 		FileOutputStream fos = null;

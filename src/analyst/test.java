@@ -1,56 +1,51 @@
-/*
- * Copyright 2007 Yusuke Yamamoto
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package analyst;
 
-import twitter4j.Status;
-import twitter4j.TwitterException;
-import twitter4j.TwitterObjectFactory;
-
 import java.io.*;
+import java.util.*;
 
-/**
- * Example application that load raw JSON forms from statuses/ directory and dump status texts.
- *
- * @author Yusuke Yamamoto - yusuke at mac.com
- */
-public final class test {
-    /**
-     * Usage: java twitter4j.examples.json.LoadRawJSON
-     *
-     * @param args String[]
-     */
-    public static void main(String[] args) {
-        try {
-            File[] files = new File("/home/sebastiankopsel/Data/Serious/clickbait").listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".json");
-                }
-            });
-            for (File file : files) {
-                String rawJSON = "";
-                Status status = TwitterObjectFactory.createStatus(rawJSON);
-                System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText());
-            }
-            System.exit(0);
-        } catch (TwitterException te) {
-            te.printStackTrace();
-            System.out.println("Failed to get timeline: " + te.getMessage());
-            System.exit(-1);
-        }
+import edu.stanford.nlp.io.*;
+import edu.stanford.nlp.ling.*;
+import edu.stanford.nlp.pipeline.*;
+import edu.stanford.nlp.trees.*;
+import edu.stanford.nlp.util.*;
+
+public class test {
+
+  public static void main(String[] args) throws IOException {
+    PrintWriter out;
+    if (args.length > 1) {
+      out = new PrintWriter(args[1]);
+    } else {
+      out = new PrintWriter(System.out);
+    }
+    PrintWriter xmlOut = null;
+    if (args.length > 2) {
+      xmlOut = new PrintWriter(args[2]);
     }
 
+    StanfordCoreNLP pipeline = new StanfordCoreNLP();
+    Annotation annotation;
+    if (args.length > 0) {
+      annotation = new Annotation(IOUtils.slurpFileNoExceptions(args[0]));
+    } else {
+      annotation = new Annotation("Seeing What This Little Boy Is Able To Do Thanks To Technology Stunned And Inspired Me.");
+    }
+
+    pipeline.annotate(annotation);
+    pipeline.prettyPrint(annotation, out);
+    if (xmlOut != null) {
+      pipeline.xmlPrint(annotation, xmlOut);
+    }
+    // An Annotation is a Map and you can get and use the various analyses individually.
+    // For instance, this gets the parse tree of the first sentence in the text.
+    List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+    if (sentences != null && sentences.size() > 0) {
+      CoreMap sentence = sentences.get(0);
+      Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
+      out.println();
+      out.println("The first sentence parsed is:");
+      tree.pennPrint(out);
+    }
+  }
 
 }

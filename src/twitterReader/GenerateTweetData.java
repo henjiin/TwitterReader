@@ -18,7 +18,7 @@ public class GenerateTweetData {
 		// default accounts to grab
 		String[] twitterAccounts = { "Slate", "washingtonpost","FortuneMagazine", "bbc", "TheCut",
 				"nytimes", "HuffingtonPost", "ViralNova", "Reuters",
-				"voxdotcom", "BuzzFeed" };
+				"voxdotcom", "BuzzFeed", "WashTimes","YahooNews","RT_com","business"};
 		if (args.length > 1) {
 			filename = args[0];
 			if (args.length > 1) {

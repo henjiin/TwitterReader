@@ -1,4 +1,6 @@
 package wekaLearning;
+import java.util.Properties;
+
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -10,11 +12,14 @@ import edu.stanford.nlp.util.CoreMap;
 public class NLP {
     static StanfordCoreNLP pipeline;
 
-    public static void init() {
-        pipeline = new StanfordCoreNLP("MyPropFile.properties");
-    }
+    public void init() {
+    	 Properties props = new Properties();
+    	 props.setProperty("annotators", "tokenize, ssplit, parse , sentiment");
+    	 pipeline = new StanfordCoreNLP(props);   	    
 
-    public static int findSentiment(String tweet) {
+            }
+
+    public int findSentiment(String tweet) {
 
         int mainSentiment = 0;
         if (tweet != null && tweet.length() > 0) {
@@ -24,7 +29,7 @@ public class NLP {
                     .get(CoreAnnotations.SentencesAnnotation.class)) {
                 Tree tree = sentence
                         .get(SentimentCoreAnnotations.AnnotatedTree.class);
-                int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
+                int sentiment = RNNCoreAnnotations.getPredictedClass(tree);                
                 String partText = sentence.toString();
                 if (partText.length() > longest) {
                     mainSentiment = sentiment;

@@ -22,10 +22,12 @@ import twitter4j.TwitterObjectFactory;
 public class ArffGenerator {
 
 	static boolean removeLinks = true;
-	static boolean removeRT = false;
+	static boolean removeRT = true;
 	static boolean removeTwitterUsers = true;
+	
 	static String arffFileName;
 	static String HEADER = "@RELATION clickibait_detection\n\n"
+			+ "@ATTRIBUTE clickbait_class {clickbait,serious}\n"
 			+ "@ATTRIBUTE tweet_text String\n"
 			+ "@ATTRIBUTE hasExclamationMark {yes,no}\n"
 			+ "@ATTRIBUTE hasQuestionMark {yes,no}\n"
@@ -33,8 +35,9 @@ public class ArffGenerator {
 			+ "@ATTRIBUTE isSelfRefering {yes,no}\n"
 			+ "@ATTRIBUTE refersToReader {yes,no}\n"
 			+ "@ATTRIBUTE starts_with_number {yes,no}\n"
-			+ "@ATTRIBUTE sentiment {very_positive,positve,neutral,negative,very_negative}\n"
-			+ "@ATTRIBUTE clickbait_class {clickbait,serious}\n\n"
+			+ "@ATTRIBUTE isEmotional {yes,no}\n"
+			+ "@ATTRIBUTE sentiment {verynegative,negative,neutral,positive,verypositve}\n"
+			+ "\n"
 			+ "@data\n";
 	static String urlPattern = "((https?|ftp|file|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
 	// TODO: To be refined
@@ -63,7 +66,8 @@ public class ArffGenerator {
 				string = string.replaceAll(m.group(i), "").trim();
 				i++;
 			}
-			return string;
+			string=string.replaceAll("@", "");
+			return string;			
 		} catch (IndexOutOfBoundsException e) {
 			return string;
 		}
@@ -154,14 +158,22 @@ public class ArffGenerator {
 	
 	public static String isSelfRefering(String text){
 		text=text.toLowerCase();
-		if(text.contains("i")||text.contains("me")||text.contains("mine")||text.contains("we")||text.contains("our"))
+		if(text.contains(" i ")||
+			text.contains(" me ")||
+			text.contains(" mine ")||
+			text.contains(" we ")||
+			text.contains(" our "))
 		return "yes";
 		return "no";
 	}
 	
 	public static String isReferingToReader(String text){
 		text=text.toLowerCase();
-		if(text.contains("you")||text.contains("your")||text.contains("yours")||text.contains("yourselfes")||text.contains("our"))
+		if(text.contains(" you ")||
+				text.contains(" your ")||
+				text.contains(" yours ")||
+				text.contains(" yourselfes ")||
+				text.contains(" our "))
 		return "yes";
 		return "no";
 		
@@ -202,13 +214,58 @@ public class ArffGenerator {
 	        else if(averageScore<=-0.75)
 	            return "very_negative";
 	        return "neutral";
-	    }		
+	    }
+	public static String getStanfordSentiment(NLP nlp, String text){		
+		int sentiment=nlp.findSentiment(text);				
+		switch (sentiment) {
+		case 0:
+			return "verynegative";			
+		case 1:
+			return "negative";
+		case 2:
+			return "neutral";
+		case 3:
+			return "positive";
+		case 4:
+			return "verypositve";
+		default:
+			return "neutral";
+		}
+	}
+	
+	public static String isEmotional(String text){
+		text=text.toLowerCase();
+		if(		text.contains("awesome")||
+				text.contains("unbelievable")||
+				text.contains("terrifying")||
+				text.contains("worst")||
+				text.contains("best")||
+				text.contains("weird")||
+				text.contains("awful")||
+				text.contains("perfect")||
+				text.contains("overwhelming")||
+				text.contains("magic")||
+				text.contains("cruel")||
+				text.contains("confuse")||
+				text.contains("happpy")||
+				text.contains("delicious")||
+				text.contains("priceless")||
+				text.contains("clever")||
+				text.contains("faith")||
+				text.contains("hot")||
+				text.contains("desperat")||
+				text.contains("desperat")				
+				)return "yes";
+		return "no";		
+	}
 	
 
 	public static void writeArff(String filename, String learningClass) {
 		List<String> list = getJSONFileList(filename);
 		SWN3 swn=null;
 		PrintWriter writer = null;
+		NLP nlp = new NLP();
+		nlp.init();
 		try {
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(
 					arffFileName, true)));
@@ -237,12 +294,16 @@ public class ArffGenerator {
 				objectAttributes.append(",");
 				objectAttributes.append(startsWithNumber(tweetText));
 				objectAttributes.append(",");
-				objectAttributes.append(getSentiment(swn, tweetText));
+				objectAttributes.append(isEmotional(tweetText));				
 				objectAttributes.append(",");
+				objectAttributes.append(getStanfordSentiment(nlp, tweetText));
+				objectAttributes.append(",");
+
+				
 				objectAttributes.append(learningClass);
 				objectAttributes.append("\n");
-				writer.write(objectAttributes.toString());
-
+				
+				writer.write(objectAttributes.toString());				
 			} catch (IOException | TwitterException | NullPointerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -254,10 +315,10 @@ public class ArffGenerator {
 	}
 
 	public static void main(String[] args) {
-		arffFileName = "/home/sebastiankopsel/Data/Serious/clickbait-caro.arff";
+		arffFileName = "/home/sebastiankopsel/Data/Serious/clickbait.arff";
 		writeHeader();
-		writeArff("/home/sebastiankopsel/Data/Serious/clickbait-caro", "clickbait");
-		writeArff("/home/sebastiankopsel/Data/Serious/serious-caro", "serious");
+		writeArff("/home/sebastiankopsel/Data/Serious/clickbait", "clickbait");
+		writeArff("/home/sebastiankopsel/Data/Serious/serious", "serious");
 		
 		
 		System.out.println("Finished");
@@ -279,14 +340,28 @@ public class ArffGenerator {
 	private static String cleanTweetText(String tweetText) {
 		tweetText = tweetText.trim();
 		tweetText = tweetText.replaceAll("\n", "").replaceAll("\r", "");
-		tweetText = tweetText.replaceAll("'", "");
+		tweetText = tweetText.replaceAll("'", " ");
+		
 		if (removeLinks)
 			tweetText = removeUrl(tweetText);
 
 		if (removeTwitterUsers)
 			tweetText = removeTwitterUser(tweetText);
+		
+		if (removeRT)
+			tweetText = removeReTweet(tweetText);
 		return tweetText;
 
+	}
+
+	private static String removeReTweet(String tweetText) {
+		tweetText = tweetText.replaceAll("RT :", "");
+		tweetText = tweetText.replaceAll("RT:", "");
+		
+		tweetText = tweetText.replaceAll("RT", "");
+		
+		tweetText=tweetText.trim();
+		return tweetText;
 	}
 
 }
