@@ -33,16 +33,7 @@ public class classify {
 	 */
 	
 	
-	
-	public static void init(){
-		properties = new Properties();
 		
-		
-		
-		
-	}
-	
-	
 	
 	private static void storeJSON(String rawJSON, String fileName)
 			throws IOException {

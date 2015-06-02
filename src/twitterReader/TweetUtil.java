@@ -19,9 +19,11 @@ public class TweetUtil {
 	static String urlPattern = "((https?|ftp|file|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
 
 	static String userPattern = "@([A-Za-z0-9_]+)";
+	static String retweetPattern = "RT " + userPattern + ":";
 	static Pattern URLpattern = Pattern.compile(urlPattern,
 			Pattern.CASE_INSENSITIVE);
 	static Pattern userPatter = Pattern.compile(userPattern);
+	static Pattern retweetPatter = Pattern.compile(retweetPattern);
 
 	public static String readFirstLine(String fileName) throws IOException {
 		FileInputStream fis = null;
@@ -67,10 +69,9 @@ public class TweetUtil {
 		} catch (IndexOutOfBoundsException e) {
 			return string;
 		}
-
 	}
 
-	private static String removeUrl(String string) {
+	public static String removeUrl(String string) {
 
 		Matcher m = URLpattern.matcher(string);
 		int i = 0;
@@ -108,17 +109,26 @@ public class TweetUtil {
 	public static String cleanTweetText(String tweetText) {
 		tweetText = tweetText.trim();
 		tweetText = tweetText.replaceAll("\n", "").replaceAll("\r", "");
+		tweetText = tweetText.replaceAll("’", " ");
 		tweetText = tweetText.replaceAll("'", " ");
+		tweetText = tweetText.replace("\"", "");
+		tweetText = tweetText.replace("“", "");
 		return tweetText;
 
 	}
 
-	private static String removeReTweet(String tweetText) {
-		tweetText = tweetText.replaceAll("RT :", "");
-		tweetText = tweetText.replaceAll("RT:", "");
-		tweetText = tweetText.replaceAll("RT", "");
-		tweetText = tweetText.trim();
-		return tweetText;
+	public static String removeReTweet(String tweetText) {
+		try {
+			Matcher m = retweetPatter.matcher(tweetText);
+			int i = 0;
+			while (m.find()) {
+				tweetText = tweetText.replaceAll(m.group(i), "").trim();
+				i++;
+			}
+			return tweetText;
+		} catch (IndexOutOfBoundsException e) {
+			return tweetText;
+		}
 	}
 
 }

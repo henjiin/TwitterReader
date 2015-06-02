@@ -1,11 +1,27 @@
 package wekaLearning;
 
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import feature.AmountOfDotsFeature;
+import feature.Feature;
+import feature.HasExclamationMarkFeature;
+import feature.HasQuestionMarkFeature;
+import feature.IsEmotionalFeature;
+import feature.IsReaderReferingFeature;
+import feature.IsSelfReferingFeature;
+import feature.SentimentFeature;
+import feature.StartsWithNumberFeature;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitterReader.TweetUtil;
@@ -17,50 +33,51 @@ public class ArffGenerator {
 	static boolean removeTwitterUsers = true;
 	public static String arfFileName;
 	static String arffFileName;
-	static NLP nlp = null;
-	static SWN3 swn = null;
-	static String HEADER = "@RELATION clickibait_detection\n\n"
-			+ "@ATTRIBUTE clickbait_class {clickbait,serious}\n"
-			+ "@ATTRIBUTE tweet_text String\n"
-			+ "@ATTRIBUTE hasExclamationMark {yes,no}\n"
-			+ "@ATTRIBUTE hasQuestionMark {yes,no}\n"
-			+ "@ATTRIBUTE amountOfDots numeric\n"
-			+ "@ATTRIBUTE isSelfRefering {yes,no}\n"
-			+ "@ATTRIBUTE refersToReader {yes,no}\n"
-			+ "@ATTRIBUTE starts_with_number {yes,no}\n"
-			+ "@ATTRIBUTE isEmotional {yes,no}\n"
-			+ "@ATTRIBUTE sentiment {verynegative,negative,neutral,positive,verypositve}\n"
-			+ "\n" + "@data\n";
-	static String[] emotionalWords = { "awesome", "unbelievable", "terrifying",
-			"worst", "best", "weird", "awful", "perfect", "overwhelming",
-			"magic", "cruel", "confuse", "happy", "delicious", "priceless",
-			"clever", "faith", "hot", "desperat", "desperat" };
-	static String[] selfReferingWords={" i "," me "," mine "," we "," our "};
-	static String[] readerReferingWords={" you "," your "," yours "," yourselfes "," our "};
-	public static boolean stringContainsItemFromList(String inputString,
-			String[] items) {
-		for (int i = 0; i < items.length; i++) {
-			if (inputString.contains(items[i])) {
-				return true;
-			}
-		}
-		return false;
+	LinkedList<Feature> usedFeatures;
+
+	static String HEADER = "@RELATION clickbait_detection\n\n";
+
+	public ArffGenerator() {
+		usedFeatures = new LinkedList<Feature>();
+		usedFeatures.add(new HasExclamationMarkFeature());
+		usedFeatures.add(new HasQuestionMarkFeature());
+		usedFeatures.add(new AmountOfDotsFeature());
+		usedFeatures.add(new IsSelfReferingFeature());
+		usedFeatures.add(new IsReaderReferingFeature());
+		usedFeatures.add(new StartsWithNumberFeature());
+		usedFeatures.add(new IsEmotionalFeature());
+		usedFeatures.add(new SentimentFeature());
 	}
-	
-	
-	public static void init() {
-		
-		nlp = new NLP();
-		nlp.init();
+
+	public ArffGenerator(String filePathToJSON) {
+		this();
+		JSONParser parser = new JSONParser();
+
 		try {
-			swn = new SWN3("/home/sebastiankopsel/Data/swn.txt");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
+			Object obj = parser.parse(new FileReader(
+					"/home/sebastiankopsel/Documents/test.json"));
+
+			JSONObject jsonObject = (JSONObject) obj;
+
+			String name = (String) jsonObject.get("Name");
+			String author = (String) jsonObject.get("Author");
+			JSONArray companyList = (JSONArray) jsonObject.get("Company List");
+
+			System.out.println("Name: " + name);
+			System.out.println("Author: " + author);
+			System.out.println("\nCompany List:");
+			Iterator<String> iterator = companyList.iterator();
+			while (iterator.hasNext()) {
+				System.out.println(iterator.next());
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void writeHeader() {
+	private void writeHeader() {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(
@@ -69,148 +86,42 @@ public class ArffGenerator {
 			e.printStackTrace();
 		}
 		writer.write(HEADER);
+		writer.write("@ATTRIBUTE clickbait_class {clickbait,serious}\n");
+		writer.write("@ATTRIBUTE tweet_text String\n");
+		for (Feature feature : usedFeatures) {
+			writer.write("@ATTRIBUTE " + feature.getArffHeader() + "\n");
+		}
+		writer.write("@data\n\n");
 		writer.flush();
 		writer.close();
 	}
 
-	public static String hasQuestionMark(String text) {
-		if (text.contains("?"))
-			return "yes";
-		else
-			return "no";
-	}
-
-	public static String hasExclamationMark(String text) {
-		if (text.contains("!"))
-			return "yes";
-		else
-			return "no";
-	}
-
-	public static int amountOfDots(String text) {
-		int counter = 0;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == '.') {
-				counter++;
-			}
-			if (text.charAt(i) == '…') {
-				counter += 3;
-			}
-		}
-		return counter;
-	}
-
-	public static String isSelfRefering(String text) {
-		text = text.toLowerCase();
-		if (stringContainsItemFromList(text, selfReferingWords))
-			return "yes";
-		return "no";
-	}
-
-	public static String isReferingToReader(String text) {
-		text = text.toLowerCase();
-		if (stringContainsItemFromList(text, readerReferingWords))
-			return "yes";
-		return "no";
-	}
-
-	public static String startsWithNumber(String text) {
-		StringTokenizer tokenizer = new StringTokenizer(text, " ");
-		String token = tokenizer.nextToken();
-		try {
-			Integer.parseInt(token);
-			return "yes";
-		} catch (NumberFormatException e) {
-			return "no";
-		}
-	}
-
-	public static String getSentiment(String text) {
-
-		String[] words = text.split("\\s+");
-		double totalScore = 0, averageScore = 0;
-		for (String word : words) {
-			word = word.replaceAll("([^a-zA-Z\\s])", "");
-			if (swn.extract(word) == null)
-				continue;
-			totalScore += swn.extract(word);
-		}
-		averageScore = totalScore / words.length;
-
-		if (averageScore >= 0.75)
-			return "verypositve";
-		else if (averageScore > 0.25 && averageScore < 0.5)
-			return "positive";
-		else if (averageScore >= 0.5)
-			return "positive";
-		else if (averageScore < 0 && averageScore >= -0.25)
-			return "negative";
-		else if (averageScore < -0.25 && averageScore >= -0.5)
-			return "negative";
-		else if (averageScore <= -0.75)
-			return "verynegative";
-		return "neutral";
-	}
-
-	public static String getStanfordSentiment(NLP nlp, String text) {
-		int sentiment = nlp.findSentiment(text);
-		switch (sentiment) {
-		case 0:
-			return "verynegative";
-		case 1:
-			return "negative";
-		case 2:
-			return "neutral";
-		case 3:
-			return "positive";
-		case 4:
-			return "verypositve";
-		default:
-			return "neutral";
-		}
-	}
-
-	public static String isEmotional(String text) {
-		text = text.toLowerCase();
-		boolean isEmotional=stringContainsItemFromList(text, emotionalWords);
-		if (isEmotional) return "yes";
-		else return "no";
-	}
-
-	private static String buildObject(Status tweet, String learningClass) {
+	private String buildObject(Status tweet, String learningClass) {
 		String tweetText = tweet.getText();
 		tweetText = TweetUtil.cleanTweetText(tweetText);
+
 		StringBuilder objectAttributes = new StringBuilder();
+
 		objectAttributes.append("\'");
 		objectAttributes.append(tweetText);
 		objectAttributes.append("\',");
-		objectAttributes.append(hasExclamationMark(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(hasQuestionMark(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(amountOfDots(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(isSelfRefering(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(isReferingToReader(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(startsWithNumber(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(isEmotional(tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(getStanfordSentiment(nlp, tweetText));
-		objectAttributes.append(",");
-		objectAttributes.append(learningClass);
-		objectAttributes.append("\n");
+		Iterator<Feature> featureIterator = usedFeatures.iterator();
+
+		while (featureIterator.hasNext()) {
+			objectAttributes.append(featureIterator.next()
+					.getFeature(tweetText));
+			if (featureIterator.hasNext())
+				objectAttributes.append(",");
+		}
+
 		return objectAttributes.toString();
 	}
 
-	public static void writeArff(String filename, String learningClass) {
+	public void writeArff(String filename, String learningClass) {
 		List<String> list = TweetUtil.getJSONFileList(filename);
 
 		PrintWriter writer = null;
-		
-		
+
 		try {
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(
 					arffFileName, true)));
@@ -236,11 +147,12 @@ public class ArffGenerator {
 	}
 
 	public static void main(String[] args) {
-		init();
 		arffFileName = "/home/sebastiankopsel/Data/Serious/clickbait.arff";
-		writeHeader();
-		writeArff("/home/sebastiankopsel/Data/Serious/clickbait", "clickbait");
-		writeArff("/home/sebastiankopsel/Data/Serious/serious", "serious");
+		ArffGenerator gen = new ArffGenerator();
+		gen.writeHeader();
+		gen.writeArff("/home/sebastiankopsel/Data/Serious/clickbait",
+				"clickbait");
+		gen.writeArff("/home/sebastiankopsel/Data/Serious/serious", "serious");
 
 		System.out.println("Finished");
 	}
