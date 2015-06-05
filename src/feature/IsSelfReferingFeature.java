@@ -5,6 +5,9 @@ static String[]	selfReferingWords={" i "," me "," mine "," we "," our "};
 public String getArffHeader(){
 	return "isSelfRefering {yes,no}";
 }
+public String getCVSHeader(){
+	return "selfRefering";
+}
 public String getFeature(String text){
 	text = text.toLowerCase();
 	if (stringContainsItemFromList(text, selfReferingWords))

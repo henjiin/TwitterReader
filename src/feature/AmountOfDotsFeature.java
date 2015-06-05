@@ -5,6 +5,9 @@ public class AmountOfDotsFeature extends Feature{
 	public String getArffHeader() {		
 		return "amountOfDots numeric";
 	}
+	public String getCVSHeader(){
+		return "amountOfDots";
+	}
 	
 	public String getFeature(String text) {
 		int counter = 0;

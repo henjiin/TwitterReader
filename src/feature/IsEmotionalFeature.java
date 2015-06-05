@@ -9,25 +9,15 @@ public class IsEmotionalFeature extends Feature {
 	public String getArffHeader() {		
 		return "isEmotional {yes,no}";
 	}
-	
-	public String getFeature(String text) {
-		int counter = 0;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == '.') {
-				counter++;
-			}
-			if (text.charAt(i) == '…') {
-				counter += 3;
-			}
-		}
-		return String.valueOf(counter);	
-		
+	public String getCVSHeader(){
+		return "isEmotional";
 	}
-	public static String isEmotional(String text) {
+	public String getFeature(String text) {
 		text = text.toLowerCase();
 		boolean isEmotional=stringContainsItemFromList(text, emotionalWords);
 		if (isEmotional) return "yes";
 		else return "no";
+		
 	}
 	
 	public static String[] getEmotionalWords() {

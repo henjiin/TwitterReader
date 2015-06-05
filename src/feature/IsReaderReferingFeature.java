@@ -6,6 +6,9 @@ public class IsReaderReferingFeature extends Feature{
 	public String getArffHeader(){
 		return "refersToReader {yes,no}";
 	}
+	public String getCVSHeader(){
+		return "referstoreader";
+	}
 	public String getFeature(String text){
 		text = text.toLowerCase();
 		if (stringContainsItemFromList(text, readerReferingWords))

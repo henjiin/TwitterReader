@@ -1,4 +1,4 @@
-package tests;
+package twitterReaderTest;
 
 import static org.junit.Assert.*;
 

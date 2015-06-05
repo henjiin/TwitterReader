@@ -5,6 +5,9 @@ public abstract class Feature {
 	public String getArffHeader() {
 		return "";
 	}
+	public String getCVSHeader(){
+		return "";
+	}
 	
 	public String getFeature(String text){
 		return "";
