@@ -2,6 +2,8 @@ package feature;
 
 import java.io.IOException;
 
+import twitter4j.Status;
+import twitterReader.TweetUtil;
 import wekaLearning.SWN3;
 
 public class SentiWordNetSentimentFature extends Feature{
@@ -20,10 +22,13 @@ public class SentiWordNetSentimentFature extends Feature{
 		return "sentiment {verynegative,negative,neutral,positive,verypositve}";
 
 	}
+	public String getCVSHeader(){
+		return "sentiment";
+	}
 
-	public String getFeature(String text){
-		
-		String[] words = text.split("\\s+");
+	public String getFeature(Status tweet){
+		String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+		String[] words = tweetText.split("\\s+");
 		double totalScore = 0, averageScore = 0;
 		for (String word : words) {
 			word = word.replaceAll("([^a-zA-Z\\s])", "");

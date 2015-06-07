@@ -1,5 +1,7 @@
 package feature;
 
+import twitter4j.Status;
+import twitterReader.TweetUtil;
 import wekaLearning.NLP;
 
 public class SentimentFeature extends Feature {
@@ -12,9 +14,13 @@ public class SentimentFeature extends Feature {
 public String getArffHeader(){
 	return "sentiment {verynegative,negative,neutral,positive,verypositve}";
 }
+public String getCVSHeader(){
+	return "sentiment";
+}
 
-public String getFeature(String text){
-	int sentiment = nlp.findSentiment(text);
+public String getFeature(Status tweet){
+	String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+	int sentiment = nlp.findSentiment(tweetText);
 	switch (sentiment) {
 	case 0:
 		return "verynegative";

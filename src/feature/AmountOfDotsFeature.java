@@ -1,5 +1,8 @@
 package feature;
 
+import twitter4j.Status;
+import twitterReader.TweetUtil;
+
 public class AmountOfDotsFeature extends Feature{
 
 	public String getArffHeader() {		
@@ -9,19 +12,18 @@ public class AmountOfDotsFeature extends Feature{
 		return "amountOfDots";
 	}
 	
-	public String getFeature(String text) {
+	public String getFeature(Status tweet) {
+		String tweetText=TweetUtil.cleanTweetText(tweet.getText());
 		int counter = 0;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == '.') {
+		for (int i = 0; i < tweetText.length(); i++) {
+			if (tweetText.charAt(i) == '.') {
 				counter++;
 			}
-			if (text.charAt(i) == '…') {
+			if (tweetText.charAt(i) == '…') {
 				counter += 3;
 			}
 		}
 		return String.valueOf(counter);			
 	}
-
-	
 
 }

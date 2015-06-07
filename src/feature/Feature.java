@@ -1,27 +1,18 @@
 package feature;
 
+import twitter4j.Status;
+
 public abstract class Feature {
 
 	public String getArffHeader() {
-		return "";
+		return "optinal String";
 	}
 	public String getCVSHeader(){
-		return "";
+		return "optonal";
 	}
 	
-	public String getFeature(String text){
-		return "";
+	public String getFeature(Status tweet){
+		return "?";
 	}
-	
-	public static boolean stringContainsItemFromList(String inputString,
-			String[] items) {
-		for (int i = 0; i < items.length; i++) {
-			if (inputString.contains(items[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
+
 }
