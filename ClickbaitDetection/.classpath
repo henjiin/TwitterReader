@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-4.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-async-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-core-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-media-support-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-stream-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/boilerpipe-1.2.0-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/nekohtml-1.9.13.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/tagsoup-1.2.1.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/xerces-2.9.1.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/ejml-0.23.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/ejml-0.23-src.zip"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/javax.json.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/javax.json-api-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/joda-time.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/joda-time-2.1-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/jollyday.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/jollyday-0.4.7-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1-models.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/xom.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/xom-1.2.10-src.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-weka-3.7.4/weka.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-apache-commons-io-2.4/commons-io-2.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

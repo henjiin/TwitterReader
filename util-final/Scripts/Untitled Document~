@@ -1,0 +1,14 @@
+#!/usr/bin/gawk
+BEGIN {
+  RS="\n"
+  FS=" "
+  x=0
+}
+{
+  x++
+}
+END {
+  for (i in username) {
+    print username[i], i;
+  }
+}

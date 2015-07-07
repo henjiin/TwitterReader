@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="thirdparty/twitter4j-4.0.3/lib/twitter4j-async-4.0.3.jar"/>
-	<classpathentry kind="lib" path="thirdparty/twitter4j-4.0.3/lib/twitter4j-core-4.0.3.jar"/>
-	<classpathentry kind="lib" path="thirdparty/twitter4j-4.0.3/lib/twitter4j-examples-4.0.3.jar"/>
-	<classpathentry kind="lib" path="thirdparty/twitter4j-4.0.3/lib/twitter4j-media-support-4.0.3.jar"/>
-	<classpathentry kind="lib" path="thirdparty/twitter4j-4.0.3/lib/twitter4j-stream-4.0.3.jar"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="/thirdparty-weka-3.7.4"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-stream-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-media-support-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-core-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-async-4.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-twitter4j-4.0.3/twitter4j-4.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://nlp.stanford.edu/nlp/javadoc/javanlp/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/stanford-corenlp-3.5.1-models.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/ejml-0.23.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/code-in-progress/thirdparty/thirdparty-json-simple-1.1.1/json-simple-1.1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/xerces-2.9.1.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/tagsoup-1.2.1.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/nekohtml-1.9.13.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/boilerpipe-1.2.0-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-jama-1.0.2/nist-jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/code-in-progress/thirdparty/thirdparty-apache-commons-csv-1.1/commons-csv-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -6,8 +6,11 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +27,7 @@ public class TweetUtil {
 			Pattern.CASE_INSENSITIVE);
 	static Pattern userPatter = Pattern.compile(userPattern);
 	static Pattern retweetPatter = Pattern.compile(retweetPattern);
-
+	static String stopwords="/home/sebastiankopsel/Data/Other_Sources/stop-words-collection-2014-02-24/stop-words/stop-words_english_6_en.txt";
 	public static String readFirstLine(String fileName) throws IOException {
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
@@ -61,6 +64,7 @@ public class TweetUtil {
 			Matcher m = userPatter.matcher(string);
 			int i = 0;
 			while (m.find()) {
+				
 				string = string.replaceAll(m.group(i), "").trim();
 				i++;
 			}
@@ -72,14 +76,13 @@ public class TweetUtil {
 	}
 
 	public static String removeUrl(String string) {
-
+		
 		Matcher m = URLpattern.matcher(string);
 		int i = 0;
 		while (m.find()) {
 			string = string.replaceAll(m.group(i), "").trim();
 			i++;
-		}
-		string.replaceAll("@", "");
+		}		
 		return string;
 	}
 
@@ -110,10 +113,34 @@ public class TweetUtil {
 		tweetText = tweetText.trim();
 		tweetText = tweetText.replaceAll("\n", "").replaceAll("\r", "");
 		tweetText = tweetText.replaceAll("’", " ");
-		tweetText = tweetText.replaceAll("'", " ");
-		tweetText = tweetText.replace("\"", "");
-		tweetText = tweetText.replace("“", "");
+		tweetText = tweetText.replaceAll("'s", " is");
+		tweetText = tweetText.replaceAll("'", "");
+		tweetText = tweetText.replace("\"", " ");
+		tweetText = tweetText.replace("“", "");		
+		tweetText = removeReTweet(tweetText);
+		tweetText = removeTwitterUser(tweetText);
+		tweetText = removeUrl(tweetText);
+		tweetText= tweetText.replace(":", "");
 		return tweetText;
+
+	}
+
+	public static String cleanStopWords(String tweetText) throws IOException {
+		String text = cleanTweetText(tweetText);
+		
+		List<String> listToTestagainst = Files
+				.readAllLines(Paths
+						.get(stopwords));
+		String cleanedText = "";
+		StringTokenizer tokenizer = new StringTokenizer(text);
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (!listToTestagainst.contains(token)) {
+				cleanedText += token+" ";
+			}
+		}
+		cleanedText=cleanedText.trim();
+		return cleanedText;
 
 	}
 

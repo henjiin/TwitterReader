@@ -1,24 +1,56 @@
 package twitterReader;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 import twitter4j.Paging;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 public class GenerateTweetData {
 
+	/**
+	 * This Script gets Tweet Timelines from given users and saves them in given place.
+	 * Default behauviour is set for my pc only.
+	 * You can give only Filename to get default users
+	 */
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		// default place to save data
-		String filename = "/home/sebastiankopsel/Data/Unclassified/";
+		String filename = "/home/sebastiankopsel/Data/Big-Tweet-Corpus/";
 		// default accounts to grab
-		String[] twitterAccounts = { "Slate", "washingtonpost","FortuneMagazine", "bbc", "TheCut",
-				"nytimes", "HuffingtonPost", "ViralNova", "Reuters",
-				"voxdotcom", "BuzzFeed", "WashTimes","YahooNews","RT_com","business"};
+		String[] twitterAccounts = { 
+//				"BBCNews", "nytimes", "mashable",
+//				"guardian", "CNN", "HuffingtonPost", "FoxNews", "nbc",
+//				"BuzzFeed", "BleacherReport", "ABC", "Forbes", "Independent",
+//				"Telegraph", "Yahoo", "businessinsider", "MailOnline",
+//				"indiatimes", "USATODAY", "espn", "ComplexMag", "verge",
+//				"washingtonpost", "billboard", "WSJ","TIME","MTV", "RT_com","ndtv",
+//				"latimes","Gizmodo","TMZ","BreitbartNews","Entrepreneur",
+//				"CNET","TechCrunch","FIFAcom",
+				"GOAL"
+//				,"CBS"
+				};
+		ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setDebugEnabled(true)
+				.setOAuthConsumerKey("dWEbLPNrfb4j6ClbuV2zbb2MF")
+				.setOAuthConsumerSecret(
+						"ITjeI4jI5Xu7p6UmdLMwlQbmhA8hkwVpmebIqyN2qredCOah6A")
+				.setOAuthAccessToken(
+						"3280097199-I9Q4dEtsX2qr9BnT5n9mTPeYlYV3Fm1yBMV5231")
+				.setOAuthAccessTokenSecret(
+						"jk08WJwHeYyK7WWK1ljhuswIc8LFuivMvwB09vKedkPN4")
+				.setJSONStoreEnabled(true);
+		TwitterFactory tf = new TwitterFactory(cb.build());
+		Twitter twitter = tf.getInstance();
+		
 		if (args.length > 1) {
 			filename = args[0];
 			if (args.length > 1) {
@@ -27,38 +59,34 @@ public class GenerateTweetData {
 			}
 		}
 
-		Twitter twitter = TwitterUserAnalyst.getTwitter();
+		
 		int pageCounter = 1;
-		int tweetsPerPage = 50;
+		int tweetsPerPage = 25;
 		Paging paging = new Paging(pageCounter, tweetsPerPage);
+	
 		List<Status> statuses = null;
+		//Runs until stopped.
+		
+		
 		while (true) {
 			for (String user : twitterAccounts) {
-				System.out.println("getting " + user);
-
 				try {
 					statuses = twitter.getUserTimeline(user, paging);
 				} catch (TwitterException twitterException) {
-					// Usually when connection limit reached
-					System.out.println("Twitter sagt Feierabend");
+					// Usually when connection limit reached					
 					return;
 				}
-				for (Status status : statuses) {
-					System.out.print("|");
-					// No Links-> No Clickbait
-					if (status.getURLEntities().length > 0) {
-						// stores tweet and the associated webpage
-
-						TwitterUserAnalyst.storeTweet(status, filename);
-
+				for (Status status : statuses) {					
+						// No Links-> No Clickbait
+						if (status.getURLEntities().length > 0) {
+							// stores tweet and the associated webpage
+							sysou
+							//TwitterUserAnalyst.storeTweet(status, filename);						
 					}
 				}
-				System.out.println();
-
 			}
 			pageCounter++;
 			paging = new Paging(pageCounter, tweetsPerPage);
-
 		}
 
 	}

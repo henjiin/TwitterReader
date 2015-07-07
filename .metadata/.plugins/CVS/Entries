@@ -1,0 +1,7 @@
+D/org.eclipse.core.resources////
+D/org.eclipse.core.runtime////
+D/org.eclipse.jdt.core////
+D/org.eclipse.jdt.launching////
+D/org.eclipse.m2e.logback.configuration////
+D/org.eclipse.team.cvs.core////
+D/org.eclipse.ui.workbench////

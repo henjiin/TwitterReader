@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -239,8 +240,7 @@ public class TwitterUserAnalyst {
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
  
-		return twitter;
-		
+		return twitter;	
 		
 	}
 	private static String readFirstLine(File fileName) throws IOException {
@@ -343,18 +343,12 @@ public class TwitterUserAnalyst {
 							return name.endsWith(".json");
 						}
 					});
-			File[] clickbait = new File("/home/sebastiankopsel/Data/Serious/clickbait")
-			.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".json");
-				}
-			});
-			File[] serious = new File("/home/sebastiankopsel/Data/Serious/serious")
-			.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".json");
-				}
-			});
+			Arrays.sort(files, new Comparator<File>(){
+			    public int compare(File f1, File f2)
+			    {
+			        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			    } });
+
 			for (File file : files) {				
 				{
 				String rawJSON = readFirstLine(file);
@@ -364,8 +358,7 @@ public class TwitterUserAnalyst {
 					//stores tweet and the associated webpage
 					
 					//storeTweet(status, isClickbait);
-					moveTweet(status, isClickbait);
-					
+					moveTweet(status, isClickbait);					
 
 				}
 				}
@@ -386,14 +379,25 @@ public class TwitterUserAnalyst {
 	private static void moveTweet(Status status, int isClickbait) {
 		// TODO Auto-generated method stub
 		String fromJSON ="/home/sebastiankopsel/Data/Unclassified/"+status.getId()+".json";
+		String fromHTML = "/home/sebastiankopsel/Data/Unclassified/"+status.getId()+".html";
 		String toJSON = "/home/sebastiankopsel/Data/Serious/";
-		if(isClickbait==CLICKBAIT)
-			toJSON+="clickbait-caro/"+status.getId()+".json";
-		if(isClickbait==SERIOUS)
-			toJSON+="serious-caro/"+status.getId()+".json";
-		if(isClickbait!=CLICKBAIT&&isClickbait!=SERIOUS) toJSON+="etc-caro/"+status.getId()+".json";;
+		String toHTML= "/home/sebastiankopsel/Data/Serious/";
+		
+		if(isClickbait==CLICKBAIT){
+			toJSON+="clickbait/"+status.getId()+".json";
+			toHTML+="clickbait/"+status.getId()+".html";
+		}
+		if(isClickbait==SERIOUS){
+			toJSON+="serious/"+status.getId()+".json";
+		    toHTML+="serious/"+status.getId()+".html";
+		}
+		if(isClickbait==NEUTRAL ){
+			toJSON+="etc/"+status.getId()+".json";;
+			toHTML+="etc/"+status.getId()+".html";
+		}
 		try {
-			Files.copy(Paths.get(fromJSON) ,Paths.get(toJSON));
+			Files.move(Paths.get(fromJSON) ,Paths.get(toJSON));
+			Files.move(Paths.get(fromHTML) ,Paths.get(toHTML));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

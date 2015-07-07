@@ -1,0 +1,12 @@
+#!/usr/bin/gawk -f
+BEGIN {
+  RS="\n"
+  FS=" "
+
+}
+{
+
+  print $9,",missing";
+  
+}
+

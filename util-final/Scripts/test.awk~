@@ -1,0 +1,13 @@
+#!/usr/bin/gawk -f
+BEGIN {
+  RS="\n"
+  FS=" "
+  x=0
+}
+{
+  x++
+  print x
+}
+END {
+  print x
+}
