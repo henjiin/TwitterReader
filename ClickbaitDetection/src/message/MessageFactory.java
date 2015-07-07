@@ -25,8 +25,7 @@ public class MessageFactory {
 		try {
 			fileContent=FileUtil.readFile(messageFile);
 			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) {			
 			e.printStackTrace();
 		}
 		if(isTweet(messageFile)){
@@ -38,8 +37,7 @@ public class MessageFactory {
 		
 	}
 	
-	private static boolean isTweet(File messageFile) {
-		// TODO Auto-generated method stub
+	private static boolean isTweet(File messageFile) {		
 		return true;
 	}
 

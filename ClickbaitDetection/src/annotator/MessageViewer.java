@@ -20,8 +20,7 @@ public class MessageViewer extends JTextPane{
 
 	public void display(Message message) {
 		currentMessage=message;
-		setText(message.getHTMLView());
-		
+		setText(message.getHTMLView());		
 		
 	}
 

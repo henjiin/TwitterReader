@@ -21,7 +21,7 @@ import java.util.List;
 
 import message.Message;
 import message.MessageFactory;
-import SelfFileUtil.FileUtil;
+import SelfFileUtil.FileFinder;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
@@ -58,7 +58,7 @@ public class GetCorpusOverview {
 	public void generateOverview() throws FileNotFoundException {
 		List<File> JSONFileList = new LinkedList<File>();
 
-		JSONFileList = FileUtil.getJsonFileList(folderName);
+		JSONFileList = FileFinder.getJsonFileList(folderName);
 		System.out.println("Found " + JSONFileList.size()+ " Messages");
 		PrintWriter writer =new PrintWriter(targetFile) ;	
 		

@@ -27,9 +27,27 @@ public class GetCorpusSelection {
 			"The Independent", "NBC News" }));
 
 	String fileFrom;
-
 	String fileTo;
 
+	String dateFrom="15/06/08";
+	public String getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(String dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public String getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
+	}
+
+	String dateTo="15/06/14";
+	
 	public GetCorpusSelection() {
 		fileFrom = "corpus.cvs";
 		fileTo = "corpus-selection.cvs";
@@ -95,13 +113,12 @@ public class GetCorpusSelection {
 				String ID = tokenizer.nextToken();
 				String user = tokenizer.nextToken();
 				String date = tokenizer.nextToken();				
-				if (date.compareTo("15/06/14") <= 0
-						&& date.compareTo("15/06/08") >= 0) {
+				if (date.compareTo(dateFrom) >= 0
+						&& date.compareTo(dateTo) <= 0) {
 					if (USERS.contains(user)) {
 						if(set.get(user)==null){
 							set.put(user, new LinkedList<String>());
 						}						
-						System.out.println(line);
 						set.get(user).add(line);						
 					}
 				}

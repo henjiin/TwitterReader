@@ -13,10 +13,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
 
 import twitter4j.Status;
 import twitter4j.TwitterObjectFactory;
@@ -45,17 +41,6 @@ public class FileUtil {
 
 		return content;
 	}
-	public static List<File> getJsonFileList(String folderName) {
-
-		File dir = new File(folderName);
-		List<String> filo = Arrays.asList(new File(folderName).list());
-		
-		String[] extensions = new String[] {"json"};		
-		List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);		
-		System.out.println("Finished getting files");
-		return files;
-	}
-
 	public static void storeJSON(String rawJSON, String fileName)
 			throws IOException {
 		FileOutputStream fos = null;

@@ -66,16 +66,14 @@ public class TwitterMessage extends Message {
 		String html = "<html><body><h1>" + tweet.getText() + "</h1><br>";
 		if (tweet.getMediaEntities().length > 0) {
 			
-			for (MediaEntity media : tweet.getMediaEntities()) {
-				System.out.println(media.getType());
+			for (MediaEntity media : tweet.getMediaEntities()) {				
 				if (media.getType().equals("photo"))
 					System.out.println(media.getExpandedURL());
 				html += "<img style=\"max-width:50%; height:auto\" src=\""
 						+ media.getMediaURL() + "\">";
 			}
 		}
-		html += "</body></html>";
-		System.out.println(html);
+		html += "</body></html>";		
 		return html;
 	}
 
