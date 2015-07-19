@@ -1,4 +1,4 @@
-package annotator;
+package annotation;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +30,23 @@ public class AnnotationView extends javax.swing.JFrame {
 	
     public AnnotationView() {
     	try {
+    		System.out.println("Loading model - please be patient this can take a second");
 			model=new AnnotationModel();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(0);
 		}
+    	Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+               try {
+				model.saveFinalAnnotation();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+               }
+    	});
     	annotationButtonListener=new AnnoationButtonListener();
         initComponents();
         nextMessage();
@@ -92,23 +103,23 @@ public class AnnotationView extends javax.swing.JFrame {
 		@Override
 		public void actionPerformed(ActionEvent buttonPress) {
 			if(buttonPress.getSource().equals(strong)){
-				System.out.println("Strong");
+				System.out.println(activeMessage.getID()+",strong");
 				model.saveAnnotation(activeMessage, "strong");
 			}
-			if(buttonPress.getSource().equals(some)){
-				System.out.println("Medium");
+			if(buttonPress.getSource().equals(some)){			
+				System.out.println(activeMessage.getID()+",medium");
 				model.saveAnnotation(activeMessage, "medium");
 			}
-			if(buttonPress.getSource().equals(weak)){
-				System.out.println("weak");
+			if(buttonPress.getSource().equals(weak)){	
+				System.out.println(activeMessage.getID()+",weak");
 				model.saveAnnotation(activeMessage, "weak");
 			}
 			if(buttonPress.getSource().equals(none)){
-				System.out.println("none");
+				System.out.println(activeMessage.getID()+",none");
 				model.saveAnnotation(activeMessage, "none");
 			}
 			if(buttonPress.getSource().equals(notsure)){
-				System.out.println("unsure");
+				System.out.println(activeMessage.getID()+",unsure");
 				model.saveAnnotation(activeMessage, "unsure");
 			}
 			nextMessage();

@@ -37,6 +37,10 @@ public class Experimenter {
 	FilteredClassifier classifier;
 	static PrintWriter out;
 
+	/*
+	 * Reads a given .arff File
+	 */
+
 	public void loadDataset(String fileName) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -49,6 +53,10 @@ public class Experimenter {
 		}
 	}
 
+	/*
+	 * Iterates over all attributes of the data set and learn only with them
+	 * with naive bayes, random forest, and Logarithmic regression
+	 */
 	public void iterateOverAttributes() throws Exception {
 
 		int numAttributes = trainData.numAttributes();
@@ -57,43 +65,51 @@ public class Experimenter {
 		System.out.println(classF);
 		// Iterate over all Attributes but the first
 		out.write("Feature,Naive, Random Forrest, Logi\n");
-		
+
 		for (int activeAttribute = 2; activeAttribute < numAttributes - 1; activeAttribute++) {
-			// get attributename
-			
-			
-			
+
 			// Remove all but the active attribute and the clickbait class
 			Remove remove = new Remove();
 			remove.setAttributeIndices("1," + String.valueOf(activeAttribute));
 			remove.setInvertSelection(true);
 			remove.setInputFormat(trainData);
 			filteredData = Filter.useFilter(trainData, remove);
-			
-			filter();
-			filteredData.setClassIndex(0);
-			
-			String attributeName = filteredData.attribute(1).name();
-			Classifier naive = (Classifier) new NaiveBayes();
-			Classifier rand = (Classifier) new RandomForest();
-			Classifier logi = (Classifier) new Logistic();
-			
-			naive.buildClassifier(filteredData);
-			rand.buildClassifier(filteredData);
-			logi.buildClassifier(filteredData);
-			
-			Evaluation naiveTest = new Evaluation(filteredData);
-			Evaluation randTest = new Evaluation(filteredData);
-			Evaluation logiTest = new Evaluation(filteredData);
-			
-			naiveTest.crossValidateModel(naive, filteredData, 10, new Random(1));			
-			randTest.crossValidateModel(rand, filteredData, 10, new Random(1));			
-			logiTest.crossValidateModel(logi, filteredData, 10, new Random(1));			
 
-			double naivA=naiveTest.weightedAreaUnderROC();
-			double randA=randTest.weightedAreaUnderROC();
-			double logiA=logiTest.weightedAreaUnderROC();
-			String attributeReport = attributeName+","+naivA+","+randA+","+logiA+"\n";
+			// Applies String to word vector if the current attribute is a
+			// string
+			filter();
+
+			// selects the first attribute as training class
+			filteredData.setClassIndex(0);
+
+			String attributeName = filteredData.attribute(1).name();
+
+			Classifier naiveBayesClassifier = (Classifier) new NaiveBayes();
+			naiveBayesClassifier.buildClassifier(filteredData);
+			Evaluation naiveBayesLearner = new Evaluation(filteredData);
+			naiveBayesLearner.crossValidateModel(naiveBayesClassifier,
+					filteredData, 10, new Random(1));
+			double naiveBayesAUC = naiveBayesLearner.weightedAreaUnderROC();
+
+			Classifier randomForestClassifier = (Classifier) new RandomForest();
+			randomForestClassifier.buildClassifier(filteredData);
+			Evaluation randomForestLearner = new Evaluation(filteredData);
+			randomForestLearner.crossValidateModel(randomForestClassifier,
+					filteredData, 10, new Random(1));
+			double randomForestAUC = randomForestLearner.weightedAreaUnderROC();
+
+			Classifier logisticRegressionClassifier = (Classifier) new Logistic();
+			logisticRegressionClassifier.buildClassifier(filteredData);
+			Evaluation logisticRegressionLearner = new Evaluation(filteredData);
+			logisticRegressionLearner.crossValidateModel(
+					logisticRegressionClassifier, filteredData, 10, new Random(
+							1));
+			double logisticRegressionAUC = logisticRegressionLearner
+					.weightedAreaUnderROC();
+
+			// print
+			String attributeReport = attributeName + "," + naiveBayesAUC + ","
+					+ randomForestAUC + "," + logisticRegressionAUC + "\n";
 			System.out.println(attributeReport);
 			out.write(attributeReport);
 			out.flush();
@@ -128,7 +144,7 @@ public class Experimenter {
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(
 					"/home/sebastiankopsel/Data/Majority-Vote-Data/solo-feature-report.txt"
-					+ "", true)));
+							+ "", true)));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -144,6 +160,5 @@ public class Experimenter {
 		out.close();
 		System.out.println("finished");
 	}
-	
 
 }

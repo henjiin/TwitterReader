@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-stanford-corenlp-3.5.1/xom-1.2.10-src.jar"/>
 	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-weka-3.7.4/weka.jar"/>
 	<classpathentry kind="lib" path="/home/sebastiankopsel/workspace/code-in-progress/thirdparty/thirdparty-apache-commons-io-2.4/commons-io-2.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -2,6 +2,7 @@ package feature;
 import message.Message;
 import corpora.*;
 import twitter4j.Status;
+import util.TextUtil;
 public class TweetShortenedLengthFeature extends Feature{
 	
 		public String getArffHeader()  {
@@ -13,12 +14,12 @@ public class TweetShortenedLengthFeature extends Feature{
 		
 		
 		public String getFeature(Status tweet){
-			return String.valueOf(TweetUtil.cleanTweetText(tweet.getText()).length());
+			return String.valueOf(TextUtil.cleanText(tweet.getText()).length());
 			
 		}
 		@Override
 		public String getFeature(Message message) {
-			return String.valueOf(TweetUtil.cleanTweetText(message.getText()).length());
+			return String.valueOf(TextUtil.cleanText(message.getText()).length());
 		}	
 
 }

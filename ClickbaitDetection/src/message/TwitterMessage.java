@@ -49,7 +49,7 @@ public class TwitterMessage extends Message {
 	}
 
 	@Override
-	public String getStatusID() {
+	public String getID() {
 
 		return String.valueOf(tweet.getId());
 	}
@@ -67,17 +67,20 @@ public class TwitterMessage extends Message {
 		if (tweet.getMediaEntities().length > 0) {
 			
 			for (MediaEntity media : tweet.getMediaEntities()) {				
-				if (media.getType().equals("photo"))
-					System.out.println(media.getExpandedURL());
+				if (media.getType().equals("photo")){					
 				html += "<img style=\"max-width:50%; height:auto\" src=\""
 						+ media.getMediaURL() + "\">";
+				}
+				else{
+					html+="<h3>"+media.getType()+" Media Entity included </h3>";
+				}
 			}
 		}
 		html += "</body></html>";		
 		return html;
 	}
 
-	private Status tweet;
+	public Status tweet;
 
 	@Override
 	public String getMediaEntitiy() {

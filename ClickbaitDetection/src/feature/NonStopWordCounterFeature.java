@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 
 import message.Message;
 import twitter4j.Status;
+import util.TextUtil;
 import corpora.*;
 
 public class NonStopWordCounterFeature extends Feature {
@@ -20,7 +21,7 @@ public class NonStopWordCounterFeature extends Feature {
 	public String getFeature(Status tweet) {
 		String tweetText = "";
 		try {
-			tweetText = TweetUtil.cleanStopWords(tweet.getText());
+			tweetText = TextUtil.cleanStopWords(tweet.getText());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -36,15 +37,22 @@ public class NonStopWordCounterFeature extends Feature {
 
 	@Override
 	public String getFeature(Message message) {
-		String messageText = "";
+		String messageText = "0";
+
 		try {
-			messageText = TweetUtil.cleanStopWords(message.getText());
-		} catch (IOException e1) {
+			messageText = TextUtil.cleanStopWords(message.getText());
+			
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
+		return getFeature(messageText);
+		
+	}
+
+	public String getFeature(String text) {
 		int count = 0;
-		StringTokenizer tokenizer = new StringTokenizer(messageText);
+		StringTokenizer tokenizer = new StringTokenizer(text);
 		while (tokenizer.hasMoreTokens()) {
 			tokenizer.nextToken();
 			count++;

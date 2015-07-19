@@ -1,4 +1,4 @@
-package corpora;
+package learning;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,10 +11,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
+import message.Message;
+import message.MessageFactory;
 import twitter4j.Status;
 import twitter4j.TwitterException;
+import util.FileFinder;
+import util.FileUtil;
 import feature.ByUserFeature;
 import feature.ContainsGroupFeature;
 import feature.Feature;
@@ -26,27 +32,28 @@ import feature.TweetTextFeature;
 
 public class ArffGenerator {
 
-	public static String arfFileName;
+	
 	static String arffFileName;
 	static LinkedList<Feature> usedFeatures;
 	static final int CSV = 1;
 	static final int ARFF = 2;
-	static int dataFormat;
+	static int outputFormat;
 	static String RELATION_NAME = "@RELATION clickbait_detection\n\n";
 	static final char CVS_TEXT_DELIMITER = '\"';
 	static final char ARFF_TEXT_DELIMITER = '\'';
 	String[] selfReferingWords = { "i", "me", "mine", "we", "our" };
 	String[] readerReferingWords = { "you", "your", "yours", "yourselfes",
 			"our" };
-
+	static String defaultClasses="none,weak,medium,strong";
+	
 	public ArffGenerator() {
-		dataFormat = ARFF;
+		outputFormat = ARFF;
 		usedFeatures = new LinkedList<Feature>();
 		
 		TweetTextFeature tweetTextFeature = new TweetTextFeature();
-		if (dataFormat == CSV)
+		if (outputFormat == CSV)
 			tweetTextFeature.setTextDelimiter(CVS_TEXT_DELIMITER);
-		if (dataFormat == ARFF)
+		if (outputFormat == ARFF)
 			tweetTextFeature.setTextDelimiter(ARFF_TEXT_DELIMITER);
 		usedFeatures.add(new StatusIDFeature());
 		usedFeatures.add(new ByUserFeature());
@@ -139,6 +146,20 @@ public class ArffGenerator {
 		}
 	}*/
 
+	/*
+	public ArffGenerator(Annotation combiner){
+		Map<String, String> anntotation=combiner.getAnnotation();
+		FileFinder finder=new FileFinder("/corpora");
+		for(Entry<String, String> annotationEntry:anntotation.entrySet() ){
+			String messageID=annotationEntry.getKey();
+			String messageAnnotation=annotationEntry.getValue();
+			File messageFile = finder.getFileById(messageID);
+			Message message= MessageFactory.getMessage(messageFile);
+			String dataEntry=buildObject(message, messageAnnotation);
+		}
+		
+	}
+	*/
 	private void writeArffHeader() {
 		PrintWriter writer = null;
 		try {
@@ -148,7 +169,7 @@ public class ArffGenerator {
 			e.printStackTrace();
 		}
 		writer.write(RELATION_NAME);
-		writer.write("@ATTRIBUTE clickbait_class {clickbait,serious}\n");
+		writer.write("@ATTRIBUTE clickbait_class {"+defaultClasses+"}\n");
 		for (Feature feature : usedFeatures) {
 			writer.write("@ATTRIBUTE " + feature.getArffHeader() + "\n");
 		}
@@ -178,7 +199,7 @@ public class ArffGenerator {
 		writer.close();
 	}
 
-	private static String buildObject(Status tweet, String learningClass) {
+	private static String buildObject(Message message, String learningClass) {
 		
 		StringBuilder objectAttributes = new StringBuilder();
 		objectAttributes.append(learningClass);
@@ -187,7 +208,7 @@ public class ArffGenerator {
 		while(it.hasNext())
 		{
 			
-			String featureValue = it.next().getFeature(tweet);			
+			String featureValue = it.next().getFeature(message);			
 			objectAttributes.append(featureValue);
 			if(it.hasNext())
 			objectAttributes.append(",");
@@ -198,7 +219,7 @@ public class ArffGenerator {
 
 		return objectAttributes.toString();
 	}
-
+	/*
 	public static LinkedList<String> getObjects(String folderName) {
 		LinkedList<String> objects = new LinkedList<String>();
 		List<String> list = TweetUtil.getJSONFileList(folderName);
@@ -229,7 +250,7 @@ public class ArffGenerator {
 		return objects;
 
 	}
-
+*/
 	public static void writeListToFile(List<String> list, String fileName) {
 		PrintWriter writer = null;
 
@@ -266,17 +287,18 @@ public class ArffGenerator {
 	}
 
 	public static void main(String[] args) {
-		arffFileName = "/home/sebastiankopsel/Data/TestData/fair-clickbait.arff";
-		ArffGenerator gen = new ArffGenerator();
-		if (dataFormat == CSV)
-			gen.writeCVSHeader();
-		if (dataFormat == ARFF)
-			gen.writeArffHeader();
-		Random rnd= new Random(1234);
-		LinkedList<String> objects = getAllObjects("//home/sebastiankopsel/Data/Majority-Vote-Data/Corpus");
-		Collections.shuffle(objects, rnd);
-		writeListToFile(objects, arfFileName);
-		System.out.println("Finished");
+//		arffFileName = "/home/sebastiankopsel/Data/TestData/fair-clickbait.arff";
+//		ArffGenerator arffGenerator = new ArffGenerator();
+//		if (outputFormat == CSV)
+//			arffGenerator.writeCVSHeader();
+//		if (outputFormat == ARFF)
+//			arffGenerator.writeArffHeader();
+//		Random rnd= new Random(1234);
+//		
+//		LinkedList<String> objects = getAllObjects("//home/sebastiankopsel/Data/Majority-Vote-Data/Corpus");
+//		Collections.shuffle(objects, rnd);
+//		writeListToFile(objects, arffFileName);
+//		System.out.println("Finished");
 	}
 
 }

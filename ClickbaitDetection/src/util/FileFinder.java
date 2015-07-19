@@ -1,4 +1,4 @@
-package SelfFileUtil;
+package util;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -13,17 +13,18 @@ public class FileFinder {
 		dictionary = new File(folderName);		
 	}
 	
-	public File[] getFileById(String ID){
+	public File getFileById(String ID){
 		// your directory
 		
 		File[] matchingFiles = dictionary.listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
-		        return name.startsWith(ID);
+		        return name.equals(ID);
 		    }
 		});
 		if(matchingFiles.length<1)return null;
-		else return matchingFiles;
+		else return matchingFiles[0];
 	}
+	
 
 	public static List<File> getJsonFileList(String folderName) {
 	

@@ -10,48 +10,16 @@ import message.Message;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import twitter4j.Status;
+import util.WebUtil;
 
 public class LengthOfWebpageFeature extends Feature{
-	String pathToCorpus="/home/sebastiankopsel/Data/Korpus-HTMLs/";
-	public void setPathToCorpus(String pathToCorpus) {
-		this.pathToCorpus = pathToCorpus;
-	}		
+		
 	
 	public String getArffHeader() {
 		return "LengthOfPage numeric";
 	}
 	public String getCVSHeader(){
 		return "LengthOfPage";
-	}
-	
-	public String getFeature(Status tweet){
-		File file;
-		String extractedMainContent;
-		//check if page is in corpus
-		if((file=new File(pathToCorpus+tweet.getId()+".html")).exists()){
-			String html ="";
-			try {
-				html = getWebpageFromFile(file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			extractedMainContent=getMainContent(html);
-			int lengthOfMainContent=extractedMainContent.length();
-			return String.valueOf(lengthOfMainContent);
-		}
-		else return "?";
-	}
-	
-	private String getMainContent(String pageHtml) {		
-		String cleanedText = "";
-		try {
-			cleanedText = ArticleExtractor.INSTANCE.getText(pageHtml);
-		} catch (BoilerpipeProcessingException e) {
-			//Noone cares what boilerpipe thinks			
-		}	
-		
-		return cleanedText;
 	}
 
 	private String getWebpageFromFile(File file) throws IOException {
@@ -75,8 +43,16 @@ public class LengthOfWebpageFeature extends Feature{
 
 	@Override
 	public String getFeature(Message message) {
-		// TODO Auto-generated method stub
-		return null;
+		String mainContent;
+		try {
+			mainContent = WebUtil.getMainContent(message.getTargetLink());
+			return String.valueOf(mainContent.length());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "?";
+		
 	}
 
 }

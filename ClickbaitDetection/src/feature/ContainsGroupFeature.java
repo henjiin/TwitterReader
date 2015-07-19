@@ -48,7 +48,10 @@ public class ContainsGroupFeature extends Feature {
 
 	private void fillList() throws IOException {
 		list = Files.readAllLines(Paths.get(pathToList),
-				Charset.defaultCharset());
+				Charset.defaultCharset());	
+		for(String entry: list){
+			entry=entry.toLowerCase();			
+		}
 	}
 
 	public String getArffHeader() {
@@ -77,17 +80,20 @@ public class ContainsGroupFeature extends Feature {
 
 	public boolean stringContainsItemFromList(String text) {
 		StringTokenizer tokenizer = new StringTokenizer(text.toLowerCase(),
-				" -_.,?!", returnDelimiter);
+				" -_.,?!'’", returnDelimiter);
 		String token;
 		while (tokenizer.hasMoreTokens()) {
 			token = tokenizer.nextToken();
+			System.out.println(token);
 			if (!stringContainsMode) {
-				if (list.contains(token))
+				for(String listItem:list){
+				if (listItem.equalsIgnoreCase(token))
 					return true;
+				}
 			}
 			else{
 				for(String listItem:list){
-					if(listItem.contains(token))
+					if(listItem.toLowerCase().contains(token))
 						return true;
 				}
 			}

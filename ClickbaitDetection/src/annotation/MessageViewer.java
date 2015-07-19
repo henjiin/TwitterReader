@@ -1,4 +1,4 @@
-package annotator;
+package annotation;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;

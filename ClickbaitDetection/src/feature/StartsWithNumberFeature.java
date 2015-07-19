@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 
 import message.Message;
 import twitter4j.Status;
+import util.TextUtil;
 import corpora.*;
 public class StartsWithNumberFeature extends Feature {
 	public String getArffHeader(){
@@ -14,7 +15,7 @@ public class StartsWithNumberFeature extends Feature {
 		return "starts with number";
 	}
 	public String getFeature(Status tweet){
-		String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+		String tweetText=TextUtil.cleanText(tweet.getText());
 		StringTokenizer tokenizer = new StringTokenizer(tweetText, " ");
 		String token = tokenizer.nextToken();
 		try {
@@ -26,14 +27,16 @@ public class StartsWithNumberFeature extends Feature {
 	}
 	@Override
 	public String getFeature(Message message) {
-		String tweetText=TweetUtil.cleanTweetText(message.getText());
-		StringTokenizer tokenizer = new StringTokenizer(tweetText, " ");
-		String token = tokenizer.nextToken();
-		try {
-			Integer.parseInt(token);
+		String text=message.getText();
+		return getFeature(text);
+	}
+	
+	public String getFeature(String text){
+		//Matches against an number regex
+		String firstToken= new StringTokenizer(text).nextToken();
+		if(firstToken.matches(".*\\d.*")){
 			return "yes";
-		} catch (NumberFormatException e) {
-			return "no";
 		}
+		else return "no";
 	}
 }

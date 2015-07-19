@@ -1,4 +1,4 @@
-package learning;
+package nlp;
 import java.util.Properties;
 
 import edu.stanford.nlp.ling.CoreAnnotations;

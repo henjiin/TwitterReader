@@ -3,7 +3,7 @@ package feature;
 import message.Message;
 import twitter4j.Status;
 
-public class ReadabilityFeature extends Feature{
+public class MessageReadabilityFeature extends Feature{
 	WordCounterFeature wordCounter= new WordCounterFeature();
 	SentenceCounterFeature sentenceCounter = new SentenceCounterFeature();
 	SyllablesCounterFeature syllablesCounter = new SyllablesCounterFeature();	
@@ -15,15 +15,7 @@ public class ReadabilityFeature extends Feature{
 	public String getCVSHeader(){
 		return "Readability";
 	}
-
-	public String getFeature(Status tweet){	
-		double wordCount=(double)Integer.valueOf(wordCounter.getFeature(tweet));
-		double sentenceCount=(double) Integer.valueOf(sentenceCounter.getFeature(tweet));
-		double syllablesCount=(double) Integer.valueOf(syllablesCounter.getFeature(tweet));
-		double readingEase=206.835-1.015*(wordCount/sentenceCount)-84.6*(syllablesCount/wordCount);
-		
-		return String.valueOf(readingEase);
-	}
+	
 	@Override
 	public String getFeature(Message message) {
 		double wordCount=(double)Integer.valueOf(wordCounter.getFeature(message));

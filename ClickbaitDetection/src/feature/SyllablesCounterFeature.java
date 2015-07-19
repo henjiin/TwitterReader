@@ -63,16 +63,18 @@ public class SyllablesCounterFeature extends Feature{
 	@Override
 	public String getFeature(Message message) {
 		String messageText=message.getText();
+		return getFeature(messageText);
+		
+	}
+	
+	public String getFeature(String text) {
 		int amountSyllables=0;
-		StringTokenizer tokenizer=new StringTokenizer(messageText);
+		StringTokenizer tokenizer=new StringTokenizer(text);
 		String word;
 		while(tokenizer.hasMoreTokens()){
 			word=tokenizer.nextToken();
 			amountSyllables+=countSyllables(word);
-		}
-		
+		}		
 		return String.valueOf(amountSyllables);
 	}
-
-
 }

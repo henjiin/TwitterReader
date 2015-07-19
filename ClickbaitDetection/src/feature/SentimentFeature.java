@@ -1,6 +1,8 @@
 package feature;
 
+import nlp.NLP;
 import twitter4j.Status;
+import util.TextUtil;
 import learning.*;
 import message.Message;
 import corpora.*;
@@ -21,7 +23,7 @@ public String getCVSHeader(){
 }
 
 public String getFeature(Status tweet){
-	String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+	String tweetText=TextUtil.cleanText(tweet.getText());
 	int sentiment = nlp.findSentiment(tweetText);
 	switch (sentiment) {
 	case 0:
@@ -41,7 +43,7 @@ public String getFeature(Status tweet){
 
 @Override
 public String getFeature(Message message) {
-	String tweetText=TweetUtil.cleanTweetText(message.getText());
+	String tweetText=TextUtil.cleanText(message.getText());
 	int sentiment = nlp.findSentiment(tweetText);
 	switch (sentiment) {
 	case 0:

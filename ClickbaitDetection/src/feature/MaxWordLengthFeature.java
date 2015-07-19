@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 
 import message.Message;
 import twitter4j.Status;
+import util.TextUtil;
 import corpora.*;
 
 public class MaxWordLengthFeature extends Feature{
@@ -15,7 +16,7 @@ public class MaxWordLengthFeature extends Feature{
 	}
 		
 	public String getFeature(Status tweet){
-		String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+		String tweetText=TextUtil.cleanText(tweet.getText());
 		StringTokenizer tokenizer= new StringTokenizer(tweetText);
 		String token;
 		int maxWordLength=0;
@@ -29,7 +30,7 @@ public class MaxWordLengthFeature extends Feature{
 	}
 	@Override
 	public String getFeature(Message message) {
-		String tweetText=TweetUtil.cleanTweetText(message.getText());
+		String tweetText=TextUtil.cleanText(message.getText());
 		StringTokenizer tokenizer= new StringTokenizer(tweetText);
 		String token;
 		int maxWordLength=0;

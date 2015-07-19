@@ -6,7 +6,7 @@ public abstract class Message {
 	public abstract String getAsscociatedMedia();
 	public abstract String getCreator();
 	public abstract String getTargetLink();
-	public abstract String getStatusID();
+	public abstract String getID();
 	public abstract boolean isTweet();
 	public abstract  String getHTMLView();
 	public abstract boolean hasMedia();

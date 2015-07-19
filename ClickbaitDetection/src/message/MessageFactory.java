@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.omg.CosNaming.IstringHelper;
 
-import SelfFileUtil.FileUtil;
+import util.FileUtil;
 
 public class MessageFactory {
 

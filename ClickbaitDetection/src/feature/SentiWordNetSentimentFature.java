@@ -1,11 +1,12 @@
 package feature;
 
 import java.io.IOException;
-import corpora.*;
 
+import nlp.SWN3;
+import corpora.*;
 import message.Message;
 import twitter4j.Status;
-
+import util.TextUtil;
 import learning.*;
 public class SentiWordNetSentimentFature extends Feature{
 	SWN3 swn;
@@ -28,7 +29,7 @@ public class SentiWordNetSentimentFature extends Feature{
 	}
 
 	public String getFeature(Status tweet){
-		String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+		String tweetText=TextUtil.cleanText(tweet.getText());
 		String[] words = tweetText.split("\\s+");
 		double totalScore = 0, averageScore = 0;
 		for (String word : words) {

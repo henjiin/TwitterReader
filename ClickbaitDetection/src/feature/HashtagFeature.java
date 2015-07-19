@@ -1,11 +1,19 @@
 package feature;
 
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import message.Message;
 import twitter4j.HashtagEntity;
 import twitter4j.Status;
 import twitter4j.UserMentionEntity;
 
 public class HashtagFeature  extends Feature{
+	public static String hashtagRegex = "#\\w+|\\s#\\w+";
+	public static Pattern hashtagPattern = Pattern.compile(hashtagRegex);
+
+
 	public String getArffHeader() {
 		return "Hashtags String";
 	}
@@ -13,34 +21,23 @@ public class HashtagFeature  extends Feature{
 		return "Hashtags";
 	}
 
-	public String getFeature(Status tweet){
-		if(tweet.getHashtagEntities().length<1)
-			return "\'noHashtags\'";
-			else{
-				String hashtags="";
-				for(HashtagEntity hashtag:tweet.getHashtagEntities()){
-					hashtags+=hashtag.getText()+" ";
-				}
-				hashtags=hashtags.replaceAll("\'", "").trim();
-				hashtags+="\'";
-				return "\'"+hashtags;
-			}
-	}	
+	
 	
 	@Override
 	public String getFeature(Message message) {
-//		if (message.getHashtagEntities().length < 1)
-//			return "\'noHashtags\'";
-//		else {
-//			String hashtags = "";
-//			for (HashtagEntity hashtag : tweet.getHashtagEntities()) {
-//				hashtags += hashtag.getText() + " ";
-//			}
-//			hashtags = hashtags.replaceAll("\'", "").trim();
-//			hashtags += "\'";
-//			return "\'" + hashtags;
-//		}
-		return "TODO";
+		String hashtags="";
+		StringTokenizer tokenizer = new StringTokenizer(message.getText());
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            if (token.startsWith("#")) {
+                hashtags+=token.substring(1)+" ";
+            }
+        }       
+        hashtags=hashtags.trim();
+        if(hashtags.equals("")) return "'none'";
+        return "'"+hashtags+"'";
 	}
 	
+	
+
 }

@@ -2,6 +2,7 @@ package feature;
 
 import message.Message;
 import twitter4j.Status;
+import util.TextUtil;
 import corpora.*;
 
 public class HasQuestionMarkFeature extends Feature {
@@ -12,7 +13,7 @@ public class HasQuestionMarkFeature extends Feature {
 		return "hasQuestionMark";
 	}
 	public String getFeature(Status tweet) {
-		String tweetText=TweetUtil.cleanTweetText(tweet.getText());
+		String tweetText=TextUtil.cleanText(tweet.getText());
 		if (tweetText.contains("?"))
 			return "yes";
 		else
@@ -20,7 +21,10 @@ public class HasQuestionMarkFeature extends Feature {
 	}
 	@Override
 	public String getFeature(Message message) {
-		// TODO Auto-generated method stub
-		return null;
+		String tweetText=TextUtil.cleanText(message.getText());
+		if (tweetText.contains("?"))
+			return "yes";
+		else
+			return "no";
 	}
 }

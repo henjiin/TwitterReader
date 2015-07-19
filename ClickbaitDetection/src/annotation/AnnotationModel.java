@@ -1,4 +1,4 @@
-package annotator;
+package annotation;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,9 +11,9 @@ import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import util.FileUtil;
 import message.Message;
 import message.MessageFactory;
-import SelfFileUtil.FileUtil;
 
 public class AnnotationModel {
 	private HashMap<String, String> annotation;
@@ -31,7 +31,7 @@ public class AnnotationModel {
 		annotation = new HashMap<String, String>();
 		messages = new LinkedList<Message>();
 		loadCorpus();
-		index = 0;
+		index = -1;
 		totalMessages = messages.size();
 		System.out.println("Initialized model with " + messages.size()
 				+ " entries");
@@ -78,10 +78,11 @@ public class AnnotationModel {
 
 	public Message getNextMessage() {
 		Message message;
+		index++;
 		if (hasMoreMessages()) {
 			message = messages.get(index);
-			index++;
-			String messageAnnotation = annotation.get(message.getStatusID());
+			
+			String messageAnnotation = annotation.get(message.getID());
 			if (messageAnnotation.equals("missing")) {
 				return message;
 			}			
@@ -100,10 +101,8 @@ public class AnnotationModel {
 	}
 
 	public Message getPreviousMessage() {		
-		if (index > 0) {
-			
-			--index;
-			System.out.println(index);
+		if (index > 0) {			
+			--index;			
 			return messages.get(index);
 		}
 		return messages.get(index);
@@ -114,7 +113,7 @@ public class AnnotationModel {
 	}
 
 	public void saveAnnotation(Message message, String annotation) {
-		this.annotation.put(message.getStatusID(), annotation);
+		this.annotation.put(message.getID(), annotation);
 	}
 
 	public String getAnnotation(String messageID) {

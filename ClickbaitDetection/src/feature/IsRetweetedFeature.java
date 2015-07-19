@@ -25,8 +25,7 @@ public class IsRetweetedFeature extends Feature{
 	}
 	@Override
 	public String getFeature(Message message) {
-		// TODO Auto-generated method stub
-		return "TODO";
+		return "?";
 	}
 	
 }

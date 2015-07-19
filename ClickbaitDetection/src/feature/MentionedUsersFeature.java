@@ -73,7 +73,7 @@ public class MentionedUsersFeature extends Feature{
 		
 		if (matcher.find())
 		{
-		    return(matcher.group(1));
+		    return(matcher.group(0));
 		}
 		return "noMentionedUsers";
 		}		

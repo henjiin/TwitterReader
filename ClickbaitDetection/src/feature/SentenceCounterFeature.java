@@ -25,17 +25,16 @@ public class SentenceCounterFeature extends Feature{
 		return "sentence_count";
 	}
 
-	public String getFeature(Status tweet){
-		String tweetText=tweet.getText();
-		Annotation document = pipeline.process(tweetText);
+	@Override
+	public String getFeature(Message message) {
+		String messageText=message.getText();
+		return getFeature(messageText);
+	}
+	public String getFeature(String text) {
+		Annotation document = pipeline.process(text);
 		pipeline.annotate(document);
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		return String.valueOf(sentences.size());
-	}
-	@Override
-	public String getFeature(Message message) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
